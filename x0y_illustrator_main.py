@@ -6,7 +6,7 @@ import sympy as sp
 from analiz import get_function_characteristics  # Импорт функции для анализа характеристик функции
 from intervals_of_monotonicity import analyze_and_translate_function  # Для анализа монотонности функции
 from int_numbers import integer_coordinates  # Для получения целочисленных координат
-from PyQt6 import QtWidgets, uic
+from PyQt6 import uic
 from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QRadioButton, QDialog, QTableWidget, QTableWidgetItem
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as ToolBar
@@ -27,12 +27,12 @@ class MplCanvas(FigureCanvas):  # Класс для канваса, на кот�
 class HistoryWindow(QDialog):  # Окно истории для отображения ранее построенных графиков
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("История построенных графиков")
+        self.setWindowTitle('История построенных графиков')
         self.setGeometry(200, 200, 230, 300)
 
         self.tableWidget = QTableWidget(self)
         self.tableWidget.setColumnCount(2)  # Количество столбцов в таблице
-        self.tableWidget.setHorizontalHeaderLabels(["Функция", "Время"])  # Заголовки таблицы
+        self.tableWidget.setHorizontalHeaderLabels(['Функция', 'Время'])  # Заголовки таблицы
 
         layout = QVBoxLayout()
         layout.addWidget(self.tableWidget)  # Добавляем таблицу в окно
@@ -65,12 +65,12 @@ class AnalysisThread(QThread):  # Поток для выполнения ана�
             monotonic_intervals = analyze_and_translate_function(self.func_str)
             integer_coords = integer_coordinates(self.func_str)
 
-            result = "Функция: {}\n\n".format(self.func_str)
+            result = 'Функция: {}\n\n'.format(self.func_str)
             for key, value in characteristics.items():
-                result += f"{key}: {value}\n\n"
-            result += "Промежутки монотонности:\n"
-            result += monotonic_intervals.get("Промежутки монотонности", "Нет данных")
-            result += "\n\n"
+                result += f'{key}: {value}\n\n'
+            result += 'Промежутки монотонности:\n'
+            result += monotonic_intervals.get('Промежутки монотонности', 'Нет данных')
+            result += '\n\n'
             result += integer_coords
 
             self.analysis_finished.emit(result)  # Отправляем результат в основной поток
@@ -101,7 +101,7 @@ class X0yIllustrator(QMainWindow):
         # Загружаем UI
         uic.loadUi(ui_file_path, self)
         # Загружаем интерфейс из .ui файла
-        self.setWindowTitle("x0y Illustrator")
+        self.setWindowTitle('x0y Illustrator')
 
         # Настройка шрифта для поля ввода
         font = self.task_field.font()
@@ -120,8 +120,8 @@ class X0yIllustrator(QMainWindow):
         self.line = None
 
         # Радио-кнопки для выбора анимации
-        self.radio_with_animation = QRadioButton("С анимацией", self)
-        self.radio_without_animation = QRadioButton("Без анимацией", self)
+        self.radio_with_animation = QRadioButton('С анимацией', self)
+        self.radio_without_animation = QRadioButton('Без анимацией', self)
         self.radio_with_animation.setChecked(True)
         self.layout.addWidget(self.radio_with_animation)
         self.layout.addWidget(self.radio_without_animation)
@@ -230,7 +230,7 @@ class X0yIllustrator(QMainWindow):
             self.canvas.draw()
 
         except Exception as e:
-            self.error_label.setText(fr"У графика {self.func_for_base} нет производной: {e}")
+            self.error_label.setText(fr'У графика {self.func_for_base} нет производной: {e}')
 
     def animate_graph(self, ax):
         self.line, = ax.plot([], [], label=fr'Функция: ${self.func_for_base}$')
@@ -261,7 +261,7 @@ class X0yIllustrator(QMainWindow):
         self.analysis_thread.start()  # Запускаем поток анализа
 
     def show_loading_gif(self):
-        self.loading_gif.setMovie(QMovie("loading.gif"))
+        self.loading_gif.setMovie(QMovie('loading.gif'))
         self.loading_gif.movie().start()  # Запускаем анимацию
         self.loading_gif.show()
 
@@ -273,7 +273,7 @@ class X0yIllustrator(QMainWindow):
         self.hide_loading_gif()
 
     def display_analysis_error(self, error_message):
-        self.Analiz_table.setText(f"Ошибка анализа: {error_message}")
+        self.Analiz_table.setText(f'Ошибка анализа: {error_message}')
         self.hide_loading_gif()
 
     def clear_history(self):
