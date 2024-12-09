@@ -1,73 +1,64 @@
-from mtranslate import translate  # Импорт библиотеки для перевода текста
-import re  # Импорт модуля регулярных выражений
-import wolframalpha  # Импорт библиотеки для взаимодействия с WolframAlpha API
+from deep_translator import GoogleTranslator  # Альтернатива для перевода
+import re
+import wolframalpha
 
 
 def translate_to_russian(text):
     try:
-        # Перевод текста с английского на русский с использованием mtranslate
-        translated_text = translate(text, "ru")
-        return format_translation(translated_text)  # Форматирование текста после перевода
+        translated_text = GoogleTranslator(source='auto', target='ru').translate(text)
+        return format_translation(translated_text)
     except Exception as e:
-        print(f"Ошибка перевода: {e}")  # Обработка ошибок при переводе
-        return text  # Возвращает исходный текст, если произошла ошибка
+        print(f"Ошибка перевода: {e}")
+        return text
 
 
 def format_translation(text):
-    # Словарь для замены терминов и выражений на более читабельный вид
     replacements = {
-        r'\bR\b': 'R (все действительные числа)',  # Замена одиночной "R" на "все действительные числа"
-        r'элемент R': '∈ R',  # Замена фразы на математический символ принадлежности
+        r'\bR\b': 'R (все действительные числа)',
+        r'элемент R': '∈ R',
         r'элемент Z': '∈ Z',
-        r'2 π': '2π',  # Удаление лишнего пробела в выражении "2 π"
-        r' \| ': ' на промежутке ',  # Замена символа "|" на более понятное выражение
-        r'x\+': 'x',  # Удаление лишнего символа "+"
-        r'\(max{.*}\)': '',  # Удаление выражений с max{}, которые могут быть неинформативны
-        r'кратность \d+': '',  # Удаление информации о кратности
-        r'abs(.*)': '|.*|'
+        r'2 π': '2π',
+        r' \| ': ' на промежутке ',
+        r'x\+': 'x',
+        r'\(max{.*}\)': '',
+        r'кратность \d+': '',
+        r'abs\((.*?)\)': r'|\1|'
     }
 
-    # Применение замен из словаря к тексту
     for pattern, replacement in replacements.items():
-        text = re.sub(pattern, replacement, text)  # Поиск и замена с использованием регулярных выражений
+        text = re.sub(pattern, replacement, text)
 
-    # Дополнительные очистки текста от лишних фраз и пробелов
     text = re.sub(r'\(все действительные числа\) \(все действительные числа\)', '(все действительные числа)', text)
     text = re.sub(r'\(предполагая функцию от реалов к реалам\)', '', text)
     text = re.sub(r'\((все неотрицательные действительные числа)\)', '', text)
-    text = re.sub(r'\s+', ' ', text)  # Удаление лишних пробелов
+    text = re.sub(r'\s+', ' ', text)
 
-    # Исправление опечаток (например, замена "четная" на "чётная")
     text = re.sub(r'четная функция', 'чётная функция', text)
-    return text.strip()  # Удаление пробелов в начале и конце строки перед возвратом
+    return text.strip()
 
 
 def get_function_characteristics(func_str):
     client = wolframalpha.Client("KJ3Q47-264X68Q8TK")
 
-    # Словарь запросов для анализа функции
     queries = {
-        "Область определения": f"domain of {func_str}",  # Запрос области определения функции
-        "Область значений": f"range of {func_str}",  # Запрос области значений функции
-        "Вершина": f"vertex of {func_str}",  # Запрос координат вершины (для квадратичных функций)
-        "Нули функции": f"zeros of {func_str}",  # Запрос нулей функции (корни)
-        "Чётность": f"is {func_str} even or odd"  # Запрос о чётности или нечётности функции
+        "Область определения": f"domain of {func_str}",
+        "Область значений": f"range of {func_str}",
+        "Вершина": f"vertex of {func_str}",
+        "Нули функции": f"zeros of {func_str}",
+        "Чётность": f"is {func_str} even or odd"
     }
 
-    # Словарь для хранения результатов анализа функции
     results = {}
     for key, query in queries.items():
-        # Отправка запроса к WolframAlpha
         res = client.query(query)
         if res['@success'] == 'false':
-            results[key] = "Ошибка: нет данных"  # Если запрос не удался
+            results[key] = "Ошибка: нет данных"
         else:
             try:
-                # Извлечение ответа из результатов запроса
                 answer = next(res.results).text
-                translated_answer = translate_to_russian(answer)  # Перевод ответа на русский язык
-                results[key] = translated_answer  # Сохранение переведённого ответа в словарь
+                translated_answer = translate_to_russian(answer)
+                results[key] = translated_answer
             except StopIteration:
-                results[key] = "Ошибка: нет ответа"  # Обработка ситуации, когда нет результатов
+                results[key] = "Ошибка: нет ответа"
 
-    return results  # Возвращает словарь с характеристиками функции
+    return results

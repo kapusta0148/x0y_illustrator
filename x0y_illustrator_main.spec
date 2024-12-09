@@ -5,7 +5,7 @@ a = Analysis(
     ['x0y_illustrator_main.py'],
     pathex=[],
     binaries=[],
-    datas=[('x0y illustrator.ui', '.'), ('intervals_of_monotonicity.py', '.'), ('int_numbers.py', '.'), ('database_utils.py', '.'), ('analiz.py', '.'), ('loading.gif', '.'), ('History_of_req.sqlite', '.')],
+    datas=[],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,4 +35,10 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+)
+app = BUNDLE(
+    exe,
+    name='x0y_illustrator_main.app',
+    icon=None,
+    bundle_identifier=None,
 )

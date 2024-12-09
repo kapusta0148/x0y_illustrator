@@ -12,7 +12,7 @@ def save_function_to_history(func_str):
     created_at = QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
 
     # SQL-запрос для вставки функции и времени создания в таблицу 'functions'
-    cursor.execute("INSERT INTO functions (function, created_at) VALUES (?, ?)", (func_str, created_at))
+    cursor.execute("""INSERT INTO functions (function, created_at) VALUES (?, ?)""", (func_str, created_at))
 
     connection.commit()  # Сохраняем изменения в базе данных
     connection.close()  # Закрываем соединение с базой данных
@@ -25,7 +25,7 @@ def load_history():
     cursor = connection.cursor()
 
     # SQL-запрос для получения всех записей из таблицы 'functions', упорядоченных по дате создания (в порядке убывания)
-    cursor.execute("SELECT function, created_at FROM functions ORDER BY created_at DESC")
+    cursor.execute("""SELECT function, created_at FROM functions ORDER BY created_at DESC""")
 
     data = cursor.fetchall()  # Извлекаем все строки результата запроса
     connection.close()  # Закрываем соединение с базой данных
@@ -39,7 +39,7 @@ def delete_history():
     cursor = connection.cursor()
 
     # SQL-запрос для удаления всех записей из таблицы 'functions'
-    cursor.execute("DELETE FROM functions")  # Удаление всех строк из таблицы
+    cursor.execute("""DELETE FROM functions""")  # Удаление всех строк из таблицы
 
     connection.commit()  # Сохраняем изменения в базе данных
     connection.close()  # Закрываем соединение с базой данных
